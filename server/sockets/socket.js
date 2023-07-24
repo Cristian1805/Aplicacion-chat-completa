@@ -1,6 +1,6 @@
 const { io } = require('../server');
-
 const { Usuarios } = require('../classes/usuarios');
+const { crearMensaje } = require('../utilidades/utilidades')
 
 const usuarios = new Usuarios();
 
@@ -21,14 +21,22 @@ io.on('connection', (client) => {
         client.broadcast.emit('listaPersona', usuarios.getPersonas() );
 
         callback( personas );
-    })
+    });
+
+    client.on('crearMensaje', (data) => {
+
+        let persona = usuarios.getPersona(client.id);
+
+        let mensaje = crearMensaje( persona.nombre, data.mensaje);
+        client.broadcast.emit('crearMensaje', mensaje)
+    });
 
     //Resolver el problema de la duplicidad de los usuarios
     client.on('disconnect', () =>{
 
         let personaBorrada = usuarios.borrarPersona(client.id);
 
-        client.broadcast.emit('Crear mensaje', {usuario: 'Administrador', mensaje: `${ personaBorrada } abandono el chat`});
+        client.broadcast.emit('crear mensaje', crearMensaje('Administrador', `${ personaBorrada.nombre } salió`));
         client.broadcast.emit('listaPersona', usuarios.getPersonas() );
 
 
