@@ -20,9 +20,10 @@ io.on('connection', (client) => {
 
         client.broadcast.emit('listaPersona', usuarios.getPersonas() );
 
-        callback( personas );
+        callback( personas);
     });
 
+    //Enviar mensaje a todo el grupo
     client.on('crearMensaje', (data) => {
 
         let persona = usuarios.getPersona(client.id);
