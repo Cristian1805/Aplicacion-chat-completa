@@ -26,12 +26,14 @@ io.on('connection', (client) => {
     });
 
     //Enviar mensaje a todo el grupo
-    client.on('crearMensaje', (data) => {
+    client.on('crearMensaje', (data, callback) => {
 
         let persona = usuarios.getPersona(client.id);
 
         let mensaje = crearMensaje( persona.nombre, data.mensaje);
         client.broadcast.to(persona.sala).emit('crearMensaje', mensaje)
+
+        callback(mensaje);
     });
 
     //Resolver el problema de la duplicidad de los usuarios
